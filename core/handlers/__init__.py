@@ -1,0 +1,1 @@
+from core.handlers.callback.message import router as core_message_router 
