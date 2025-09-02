@@ -1,0 +1,20 @@
+version: '3.8'
+
+services:
+  neiro-bot:
+    build: .
+    container_name: fresh-neiro-bot
+    restart: unless-stopped
+    environment:
+      - TZ=Europe/Moscow
+    volumes:
+      - ./logs:/app/logs
+      - ./.env:/app/.env:ro
+    env_file:
+      - .env
+    networks:
+      - bot-network
+
+networks:
+  bot-network:
+    driver: bridge 
