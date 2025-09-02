@@ -5,10 +5,10 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # Токен бота из переменной окружения
-BOT_TOKEN = os.getenv("BOT_TOKEN", "your_bot_token_here")
+BOT_TOKEN = os.getenv("BOT_TOKEN", "8322731583:AAGWGB6JIag2MRcL0pzyNdmoTKn3LNyQgzY")
 
 # API ключ DeepSeek
-DEEPSEEK_API_KEY = os.getenv("DEEPSEEK_API_KEY", "your_deepseek_api_key_here")
+DEEPSEEK_API_KEY = os.getenv("DEEPSEEK_API_KEY", "sk-c878ab0cc04a4650a2fa3aba75e98d71")
 DEEPSEEK_API_URL = os.getenv("DEEPSEEK_API_URL", "https://api.deepseek.com/v1/chat/completions")
 DEEPSEEK_MODEL = os.getenv("DEEPSEEK_MODEL", "deepseek-coder")
 
@@ -16,4 +16,4 @@ DEEPSEEK_MODEL = os.getenv("DEEPSEEK_MODEL", "deepseek-coder")
 WEBHOOK_URL = os.getenv("WEBHOOK_URL", "https://webhooks.freshauto.ru/handle_reclamation")
 
 # API ключ для вебхука (если нужен)
-WEBHOOK_API_KEY = os.getenv("WEBHOOK_API_KEY", "your_webhook_api_key_here") 
+WEBHOOK_API_KEY = os.getenv("WEBHOOK_API_KEY", "your_webhook_api_key_here")

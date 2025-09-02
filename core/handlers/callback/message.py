@@ -179,10 +179,8 @@ async def handle_solution_confirmation_step(message: types.Message, state: FSMCo
         webhook_success = send_client_data_to_webhook(client_data)
         print(f"📊 Результат отправки: {'✅ Успешно' if webhook_success else '❌ Ошибка'}")
         
-        if webhook_success:
-            await message.answer(SUCCESS_TEMPLATE)
-        else:
-            await message.answer("✅ Ваше обращение зарегистрировано, но возникла техническая проблема при передаче данных. С вами свяжется руководитель отдела урегулирования в течение 12 часов.")
+        # Всегда показываем успешное сообщение, независимо от результата вебхука
+        await message.answer(SUCCESS_TEMPLATE)
         
         # Очищаем состояние
         await state.clear()

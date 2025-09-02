@@ -182,8 +182,8 @@ def send_client_data_to_webhook(client_data: Dict[str, Any]) -> bool:
             except Exception as e:
                 print(f"❌ Query параметры ошибка: {e}")
         
-        if response.status_code == 200:
-            print(f"✅ Данные успешно отправлены на вебхук")
+        if response.status_code in [200, 201, 202]:
+            print(f"✅ Данные успешно отправлены на вебхук (статус: {response.status_code})")
             try:
                 response_json = response.json()
                 print(f"📝 JSON ответ: {response_json}")
