@@ -21,13 +21,21 @@ def create_problem_summary(topic: str, details: str) -> str:
     - Не добавлять лишней информации
     - Сохранять грамматическую правильность
     - Использовать правильные падежи и склонения
+    - НЕ добавлять лишние точки, вопросительные знаки или другие символы
+    - Использовать обращение "Вы" вместо "он/она/ему"
+    - Заканчивать резюме одним предложением без лишних знаков
     
-    Верни только резюме без дополнительных комментариев.
+    Пример правильного формата:
+    "Вы сообщаете о проблеме с освещением в салоне. Вам не понравился свет?"
+    
+    Верни только резюме без дополнительных комментариев, точек в конце или лишних символов.
     """
     
     try:
         summary = ask_ai(prompt, [])
-        return summary.strip()
+        # Очищаем резюме от лишних символов
+        cleaned_summary = summary.strip().rstrip('?.!')
+        return cleaned_summary
     except Exception as e:
         # Fallback - простое резюме
         return f"{topic}: {details[:100]}{'...' if len(details) > 100 else ''}"
@@ -47,13 +55,18 @@ def update_problem_summary(original_summary: str, correction: str) -> str:
     - Сохраняет ключевые моменты
     - Краткое и понятное
     - Использует слова клиента
+    - Использует обращение "Вы" вместо "он/она/ему"
+    - НЕ содержит лишних символов в конце
+    - Заканчивается одним предложением
     
     Верни только обновленное резюме без дополнительных комментариев.
     """
     
     try:
         summary = ask_ai(prompt, [])
-        return summary.strip()
+        # Очищаем резюме от лишних символов
+        cleaned_summary = summary.strip().rstrip('?.!')
+        return cleaned_summary
     except Exception as e:
         # Fallback - простое обновление
         return f"{original_summary} (уточнение: {correction[:50]})"
@@ -72,13 +85,21 @@ def create_solution_summary(solution: str) -> str:
     - Использовать ключевые слова клиента
     - Быть понятным и четким
     - Не добавлять лишней информации
+    - Использовать обращение "Вы" вместо "он/она/ему"
+    - НЕ содержать лишних символов в конце
+    - Заканчиваться одним предложением
+    
+    Пример правильного формата:
+    "Вы предлагаете улучшить освещение в салоне и установить более яркие лампы."
     
     Верни только резюме без дополнительных комментариев.
     """
     
     try:
         summary = ask_ai(prompt, [])
-        return summary.strip()
+        # Очищаем резюме от лишних символов
+        cleaned_summary = summary.strip().rstrip('?.!')
+        return cleaned_summary
     except Exception as e:
         # Fallback - простое резюме
         return f"{solution[:100]}{'...' if len(solution) > 100 else ''}"
@@ -98,13 +119,18 @@ def update_solution_summary(original_summary: str, correction: str) -> str:
     - Сохраняет ключевые моменты
     - Краткое и понятное
     - Использует слова клиента
+    - Использует обращение "Вы" вместо "он/она/ему"
+    - НЕ содержит лишних символов в конце
+    - Заканчивается одним предложением
     
     Верни только обновленное резюме без дополнительных комментариев.
     """
     
     try:
         summary = ask_ai(prompt, [])
-        return summary.strip()
+        # Очищаем резюме от лишних символов
+        cleaned_summary = summary.strip().rstrip('?.!')
+        return cleaned_summary
     except Exception as e:
         # Fallback - простое обновление
         return f"{original_summary} (уточнение: {correction[:50]})" 
