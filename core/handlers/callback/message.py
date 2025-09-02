@@ -122,9 +122,9 @@ async def handle_confirmation_step(message: types.Message, state: FSMContext, us
         await state.set_state(ClientDialog.waiting_for_solution)
         
     elif user_response in NEGATIVE_ANSWERS:
-        # Возвращаемся к началу
-        await message.answer(RESTART_MESSAGE)
-        await state.set_state(ClientDialog.waiting_for_name)
+        # Возвращаемся на предыдущий шаг - запрос деталей проблемы
+        await message.answer("Хорошо, давайте исправим. " + TOPIC_REQUEST)
+        await state.set_state(ClientDialog.waiting_for_details)
         
     else:
         # Обрабатываем как уточнение
@@ -186,9 +186,9 @@ async def handle_solution_confirmation_step(message: types.Message, state: FSMCo
         await state.clear()
         
     elif user_response in NEGATIVE_ANSWERS:
-        # Возвращаемся к началу
-        await message.answer(RESTART_MESSAGE)
-        await state.set_state(ClientDialog.waiting_for_name)
+        # Возвращаемся на предыдущий шаг - запрос предложения решения
+        await message.answer("Хорошо, давайте исправим. " + SOLUTION_REQUEST)
+        await state.set_state(ClientDialog.waiting_for_solution)
         
     else:
         # Обрабатываем как уточнение
