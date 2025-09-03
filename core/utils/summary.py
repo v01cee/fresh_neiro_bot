@@ -32,7 +32,7 @@ def create_problem_summary(topic: str, details: str) -> str:
     """
     
     try:
-        summary = ask_ai(prompt, [])
+        summary = ask_ai(prompt, [], skip_offtopic_check=True)
         # Очищаем резюме от лишних символов
         cleaned_summary = summary.strip().rstrip('?.!')
         return cleaned_summary
@@ -63,7 +63,7 @@ def update_problem_summary(original_summary: str, correction: str) -> str:
     """
     
     try:
-        summary = ask_ai(prompt, [])
+        summary = ask_ai(prompt, [], skip_offtopic_check=True)
         # Очищаем резюме от лишних символов
         cleaned_summary = summary.strip().rstrip('?.!')
         return cleaned_summary
@@ -96,7 +96,7 @@ def create_solution_summary(solution: str) -> str:
     """
     
     try:
-        summary = ask_ai(prompt, [])
+        summary = ask_ai(prompt, [], skip_offtopic_check=True)
         # Очищаем резюме от лишних символов
         cleaned_summary = summary.strip().rstrip('?.!')
         return cleaned_summary
@@ -127,7 +127,7 @@ def update_solution_summary(original_summary: str, correction: str) -> str:
     """
     
     try:
-        summary = ask_ai(prompt, [])
+        summary = ask_ai(prompt, [], skip_offtopic_check=True)
         # Очищаем резюме от лишних символов
         cleaned_summary = summary.strip().rstrip('?.!')
         return cleaned_summary

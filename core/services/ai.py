@@ -33,12 +33,12 @@ def is_off_topic(message: str) -> bool:
         print(f"Ошибка при классификации релевантности: {e}")
         return False
 
-def ask_ai(user_message: str, history=None) -> str:
+def ask_ai(user_message: str, history=None, skip_offtopic_check: bool = False) -> str:
     if history is None:
         history = []
     
-    # Проверяем, не является ли сообщение отвлеченной темой
-    if is_off_topic(user_message):
+    # Проверяем, не является ли сообщение отвлеченной темой (если не отключено явно)
+    if not skip_offtopic_check and is_off_topic(user_message):
         return OFF_TOPIC_RESPONSE
     
     messages = [
