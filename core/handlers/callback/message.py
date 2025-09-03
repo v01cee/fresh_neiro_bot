@@ -2,7 +2,7 @@ import asyncio
 from aiogram import Router, types, F
 from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
-from core.services.ai import ask_ai, is_off_topic
+from core.services.ai import ask_ai
 from core.utils.ai import validate_phone, format_phone
 from core.handlers.state.dialog import ClientDialog
 from core.utils.messages import *
@@ -15,7 +15,7 @@ router = Router(name="core_message_router")
 async def cmd_start(message: types.Message, state: FSMContext):
     """
     Обработчик команды /start - сбрасывает диалог и приветствует пользователя
-    """
+"""
     await state.clear()
     await message.answer(WELCOME_MESSAGE)
     await state.set_state(ClientDialog.waiting_for_name)
@@ -32,11 +32,6 @@ async def handle_message(message: types.Message, state: FSMContext):
         return
     
     user_message = message.text.strip()
-    
-    # Проверяем отвлеченные темы
-    if is_off_topic(user_message):
-        await message.answer(OFF_TOPIC_RESPONSE)
-        return
     
     # Получаем текущее состояние диалога
     current_state = await state.get_state()

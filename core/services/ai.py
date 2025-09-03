@@ -37,9 +37,9 @@ def ask_ai(user_message: str, history=None, skip_offtopic_check: bool = False) -
     if history is None:
         history = []
     
-    # Проверяем, не является ли сообщение отвлеченной темой (если не отключено явно)
-    if not skip_offtopic_check and is_off_topic(user_message):
-        return OFF_TOPIC_RESPONSE
+    # Полностью отключаем off-topic проверку на уровне ответа ассистента
+    # if not skip_offtopic_check and is_off_topic(user_message):
+    #     return OFF_TOPIC_RESPONSE
     
     messages = [
         {"role": "system", "content": SYSTEM_PROMPT},

@@ -2,7 +2,7 @@ from aiogram import Router, F
 from aiogram.types import Message, Voice
 from aiogram.fsm.context import FSMContext
 from core.services.audio import audio_processor
-from core.services.ai import fix_grammar, is_off_topic
+from core.services.ai import fix_grammar
 from core.handlers.state.dialog import ClientDialog
 from core.handlers.callback.message import (
     handle_details_step, 
@@ -10,7 +10,6 @@ from core.handlers.callback.message import (
     handle_solution_step, 
     handle_solution_confirmation_step
 )
-from core.utils.messages import OFF_TOPIC_RESPONSE
 
 router = Router(name="voice_handler")
 
@@ -72,11 +71,6 @@ async def handle_voice_message(message: Message, state: FSMContext):
         
         # Используем исправленный текст для дальнейшей обработки
         final_text = corrected_text
-        
-        # Проверяем релевантность теме авто/регистрации
-        if is_off_topic(final_text):
-            await message.answer(OFF_TOPIC_RESPONSE)
-            return
         
         # Обрабатываем как обычное текстовое сообщение в зависимости от текущего шага
         if current_state == ClientDialog.waiting_for_details.state:
