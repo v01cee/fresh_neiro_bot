@@ -23,7 +23,7 @@ def ask_ai(user_message: str, history=None) -> str:
 
 def validate_phone(phone: str) -> bool:
     """
-    Валидирует формат телефона: +7 XXX XX XX или 8 ХХХ ХХ ХХ
+    Валидирует формат телефона: +7 XXX XXX XX XX или 8 XXX XXX XX XX
     """
     # Убираем все пробелы, дефисы, скобки
     phone_clean = re.sub(r'[\s\-\(\)]', '', phone)
@@ -43,8 +43,8 @@ def format_phone(phone: str) -> str:
     phone_clean = re.sub(r'[\s\-\(\)]', '', phone)
     
     if phone_clean.startswith('+7'):
-        return f"+7 {phone_clean[2:5]} {phone_clean[5:7]} {phone_clean[7:9]} {phone_clean[9:]}"
+        return f"+7 {phone_clean[2:5]} {phone_clean[5:8]} {phone_clean[8:10]} {phone_clean[10:12]}"
     elif phone_clean.startswith('8'):
-        return f"8 {phone_clean[1:4]} {phone_clean[4:6]} {phone_clean[6:8]} {phone_clean[8:]}"
+        return f"8 {phone_clean[1:4]} {phone_clean[4:7]} {phone_clean[7:9]} {phone_clean[9:11]}"
     
     return phone 
