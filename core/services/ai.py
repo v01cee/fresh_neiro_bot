@@ -1,6 +1,6 @@
 import requests
 from core.utils.config import DEEPSEEK_API_KEY, API_URL, DEEPSEEK_MODEL
-from core.utils.prompt import SYSTEM_PROMPT, OFF_TOPIC_RESPONSE, AUTO_RELEVANCE_SYSTEM_PROMPT
+from core.utils.prompt import SYSTEM_PROMPT, OFF_TOPIC_RESPONSE, AUTO_RELEVANCE_SYSTEM_PROMPT, CONFIRMATION_CLASSIFIER_PROMPT
 
 def is_off_topic(message: str) -> bool:
     """
@@ -109,3 +109,33 @@ def fix_grammar(text: str) -> str:
     except Exception as e:
         print(f"Ошибка при исправлении грамматики: {e}")
         return text 
+
+def classify_confirmation(text: str) -> str:
+    """Возвращает 'YES', 'NO' или 'UNCLEAR' по ответу пользователя."""
+    try:
+        if not text or not text.strip():
+            return "UNCLEAR"
+        if DEEPSEEK_API_KEY == "ваш_deepseek_api_key" or not DEEPSEEK_API_KEY:
+            return "UNCLEAR"
+        messages = [
+            {"role": "system", "content": CONFIRMATION_CLASSIFIER_PROMPT},
+            {"role": "user", "content": text}
+        ]
+        headers = {"Authorization": f"Bearer {DEEPSEEK_API_KEY}", "Content-Type": "application/json"}
+        data = {
+            "model": DEEPSEEK_MODEL,
+            "messages": messages
+        }
+        response = requests.post(API_URL, json=data, headers=headers, timeout=10)
+        if response.ok:
+            raw = response.json().get("choices", [{}])[0].get("message", {}).get("content", "")
+            label = (raw or "").strip().upper()
+            if label.startswith("YES"):
+                return "YES"
+            if label.startswith("NO"):
+                return "NO"
+            return "UNCLEAR"
+        return "UNCLEAR"
+    except Exception as e:
+        print(f"Ошибка при классификации подтверждения: {e}")
+        return "UNCLEAR" 

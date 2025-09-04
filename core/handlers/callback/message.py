@@ -2,7 +2,7 @@ import asyncio
 from aiogram import Router, types, F
 from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
-from core.services.ai import ask_ai
+from core.services.ai import ask_ai, classify_confirmation
 from core.utils.ai import validate_phone, format_phone
 from core.handlers.state.dialog import ClientDialog
 from core.utils.messages import *
@@ -109,32 +109,26 @@ async def handle_details_step(message: types.Message, state: FSMContext, user_me
 
 async def handle_confirmation_step(message: types.Message, state: FSMContext, user_message: str):
     """Обработка шага подтверждения"""
-    user_response = user_message.lower().strip()
+    user_response = user_message.strip()
     
-    if user_response in POSITIVE_ANSWERS:
-        # Переходим к запросу решения
+    # Пробуем классификацию через ИИ
+    label = classify_confirmation(user_response)
+    if label == "YES" or user_response.lower() in POSITIVE_ANSWERS:
         await message.answer(SOLUTION_REQUEST)
         await state.set_state(ClientDialog.waiting_for_solution)
-        
-    elif user_response in NEGATIVE_ANSWERS:
-        # Возвращаемся на предыдущий шаг - запрос деталей проблемы
+        return
+    if label == "NO" or user_response.lower() in NEGATIVE_ANSWERS:
         await message.answer("Хорошо, давайте исправим. " + TOPIC_REQUEST)
         await state.set_state(ClientDialog.waiting_for_details)
-        
-    else:
-        # Обрабатываем как уточнение
-        data = await state.get_data()
-        original_summary = data.get('problem_summary', '')
-        
-        # Создаем новое резюме на основе уточнения
-        new_summary = update_problem_summary(original_summary, user_message)
-        
-        # Сохраняем обновленное резюме
-        await state.update_data(problem_summary=new_summary)
-        
-        # Отправляем обновленное подтверждение
-        confirmation_text = CONFIRMATION_UPDATE_TEMPLATE.format(summary=new_summary)
-        await message.answer(confirmation_text)
+        return
+    
+    # Иначе считаем как уточнение
+    data = await state.get_data()
+    original_summary = data.get('problem_summary', '')
+    new_summary = update_problem_summary(original_summary, user_message)
+    await state.update_data(problem_summary=new_summary)
+    confirmation_text = CONFIRMATION_UPDATE_TEMPLATE.format(summary=new_summary)
+    await message.answer(confirmation_text)
 
 async def handle_solution_step(message: types.Message, state: FSMContext, user_message: str):
     """Обработка шага предложения решения"""
@@ -154,48 +148,34 @@ async def handle_solution_step(message: types.Message, state: FSMContext, user_m
 
 async def handle_solution_confirmation_step(message: types.Message, state: FSMContext, user_message: str):
     """Обработка шага подтверждения предложения решения"""
-    user_response = user_message.lower().strip()
+    user_response = user_message.strip()
     
-    if user_response in POSITIVE_ANSWERS:
-        # Получаем все данные клиента
+    # Пробуем классификацию через ИИ
+    label = classify_confirmation(user_response)
+    if label == "YES" or user_response.lower() in POSITIVE_ANSWERS:
         data = await state.get_data()
         print(f"📋 Данные клиента из состояния: {data}")
-        
-        # Форматируем данные для вебхука
         client_data = format_client_data_for_webhook(
             name=data.get('client_name', ''),
             phone=data.get('client_phone', ''),
             problem_description=data.get('client_details', ''),
             client_offer=data.get('client_solution', '')
         )
-        
-        # Отправляем данные на вебхук
         print("🚀 Отправляю данные на вебхук...")
         webhook_success = send_client_data_to_webhook(client_data)
         print(f"📊 Результат отправки: {'✅ Успешно' if webhook_success else '❌ Ошибка'}")
-        
-        # Всегда показываем успешное сообщение, независимо от результата вебхука
         await message.answer(SUCCESS_TEMPLATE)
-        
-        # Очищаем состояние
         await state.clear()
-        
-    elif user_response in NEGATIVE_ANSWERS:
-        # Возвращаемся на предыдущий шаг - запрос предложения решения
+        return
+    if label == "NO" or user_response.lower() in NEGATIVE_ANSWERS:
         await message.answer("Хорошо, давайте исправим. " + SOLUTION_REQUEST)
         await state.set_state(ClientDialog.waiting_for_solution)
-        
-    else:
-        # Обрабатываем как уточнение
-        data = await state.get_data()
-        original_summary = data.get('solution_summary', '')
-        
-        # Создаем новое резюме на основе уточнения
-        new_summary = update_solution_summary(original_summary, user_message)
-        
-        # Сохраняем обновленное резюме
-        await state.update_data(solution_summary=new_summary)
-        
-        # Отправляем обновленное подтверждение
-        confirmation_text = SOLUTION_CONFIRMATION_UPDATE_TEMPLATE.format(summary=new_summary)
-        await message.answer(confirmation_text) 
+        return
+    
+    # Иначе считаем как уточнение
+    data = await state.get_data()
+    original_summary = data.get('solution_summary', '')
+    new_summary = update_solution_summary(original_summary, user_message)
+    await state.update_data(solution_summary=new_summary)
+    confirmation_text = SOLUTION_CONFIRMATION_UPDATE_TEMPLATE.format(summary=new_summary)
+    await message.answer(confirmation_text) 
